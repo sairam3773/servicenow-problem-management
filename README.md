@@ -1,56 +1,117 @@
-ServiceNow Problem Management – POC
+# ServiceNow Problem Management – POC
 
-A proof-of-concept Problem Management application on the ServiceNow platform. It adds a custom table that extends the out-of-the-box problem table, with its own numbering, role-based access, form behaviour, and automation that creates a Problem Task when a problem reaches the Assess stage.
+A Proof of Concept (POC) application built on the ServiceNow platform to enhance the standard Problem Management process. The application uses a custom table extending the out-of-the-box Problem table, with custom numbering, form behaviour, business rules, and automated Problem Task creation.
 
-Scope: POC ITSM (scoped app) | Update set: POC_PRB_TABLE | Custom table: u_poc_problem_table
+## Project Overview
 
-Features
-Area	Implementation
-Custom table	POC Problem Table (u_poc_problem_table) extends Problem → inherits Task fields, state model, CI, impact/urgency
-Auto-numbering	Custom number prefix POCPRB (7 digits)
-Custom field	Initial Assignment Group (u_poc_initial_assignment_group)
-Business rule – Initial assignment	Before insert/update: stores the first assignment group so reassignment history isn't lost
-Business rule – Problem task automation	After update when State = Assess: auto-creates a problem_task copying CI, short description and description
-UI Policy	Assignment group becomes mandatory in Assess
-UI Policy	Configuration Item becomes mandatory in Root Cause Analysis
-UI Policy	Description shown once Short description is filled
-Client script	onLoad help icons on Impact and Urgency
-UI Action	Save & Exit form button (saves and returns to the list)
-Security	Dedicated role u_poc_problem_table_user; ACLs for create / read / write / delete
-Navigation	Application menu POC Problem Table → module POC Problem Tables
-Form layout	Custom form sections, including a Notes section
-Problem lifecycle used
+- **Platform:** ServiceNow
+- **Application:** POC ITSM
+- **Custom Table:** `u_poc_problem_table`
+- **Update Set:** `POC_PRB_TABLE`
+- **Number Prefix:** `POCPRB`
+- **Prerequisite:** Problem Management plugin (`com.snc.problem`)
 
-New → Assess → Root Cause Analysis → … (state values: Assess = 102, RCA = 103)
+## Features
 
-Repository structure
+| Area | Implementation |
+|---|---|
+| Custom Table | POC Problem Table extending the standard Problem table |
+| Auto-numbering | Custom number prefix `POCPRB` with 7-digit numbering |
+| Custom Field | Initial Assignment Group (`u_poc_initial_assignment_group`) |
+| Business Rule | Captures the initial assignment group during record creation and updates |
+| Business Rule | Automatically creates a Problem Task when the problem reaches the Assess stage |
+| UI Policy | Makes Assignment Group mandatory during Assess |
+| UI Policy | Makes Configuration Item mandatory during Root Cause Analysis |
+| UI Policy | Displays Description after Short Description is filled |
+| Client Script | Displays help icons on Impact and Urgency fields |
+| UI Action | Save & Exit button to save the record and return to the list |
+| Navigation | Application menu and module for accessing POC Problem Tables |
+| Form Layout | Custom form sections, including a Notes section |
+
+## Problem Lifecycle
+
+The project uses the following problem lifecycle stages:
+
+`New → Assess → Root Cause Analysis → ...`
+
+Relevant state values:
+- **Assess:** `102`
+- **Root Cause Analysis:** `103`
+
+## Repository Structure
+
+```text
+ServiceNow-Problem-Management-POC/
 ├── update-set/
-│   └── POC_PRB_TABLE_update_set.xml     # Importable ServiceNow update set
-├── scripts/                              # Readable copies of the custom scripts
+│   └── POC_PRB_TABLE_update_set.xml
+├── scripts/
 │   ├── business_rule_initial_assignment_group.js
 │   ├── business_rule_problem_task_automation.js
 │   ├── client_script_help_icon_prb.js
 │   └── ui_policy_make_ci_mandatory_in_rca.js
 └── README.md
-How to install
-In your ServiceNow instance go to System Update Sets → Retrieve Update Sets → Import Update Set from XML.
-Upload update-set/POC_PRB_TABLE_update_set.xml.
-Open the imported set (POC_PRB_TABLE) → Preview Update Set → resolve any issues → Commit Update Set.
-Assign the role u_poc_problem_table_user to your test user.
-Open POC Problem Table → POC Problem Tables from the application navigator.
+```
 
-Requires the Problem Management plugin (com.snc.problem) on the target instance.
+## Installation Guide
 
-Testing the flow
-Create a new record in POC Problem Tables → note the POCPRB… number.
-Set an Assignment group → check Initial Assignment Group is populated and doesn't change on reassignment.
-Move State to Assess → Assignment group is mandatory; save → a Problem Task is created automatically.
-Move State to Root Cause Analysis → Configuration Item becomes mandatory.
-Possible improvements
-Guard the problem-task business rule so it doesn't create duplicates when an Assess record is updated more than once (e.g. condition state CHANGES TO Assess).
-Add a Flow Designer flow / notifications for assignment changes.
-Add a Problem → Known Error → Knowledge article workflow.
-Add reporting (dashboard of problems by state, priority, assignment group).
-Tech
+1. Log in to your ServiceNow instance.
+2. Navigate to **System Update Sets → Retrieved Update Sets**.
+3. Import the update set XML file.
+4. Open the imported update set named `POC_PRB_TABLE`.
+5. Click **Preview Update Set** and resolve any conflicts or errors.
+6. Click **Commit Update Set**.
+7. Open **POC Problem Table → POC Problem Tables** from the Application Navigator.
 
-ServiceNow (ITSM – Problem Management) · Business Rules · Client Scripts · UI Policies · ACLs · GlideRecord · JavaScript
+**Prerequisite:** Ensure that the Problem Management plugin (`com.snc.problem`) is available and activated in the target instance.
+
+## Testing the Application
+
+### 1. Create a Problem Record
+Create a new record from POC Problem Tables and verify that the number follows the `POCPRB` prefix.
+
+### 2. Verify Initial Assignment Group
+Set an Assignment Group and save the record. Verify that the Initial Assignment Group field is populated and retains the original group when the record is reassigned.
+
+### 3. Verify Problem Task Automation
+Change the problem state to **Assess** and save the record. Verify that a Problem Task is created automatically with the Configuration Item, Short Description, and Description copied from the problem.
+
+### 4. Verify UI Policies
+- During **Assess**, Assignment Group should be mandatory.
+- During **Root Cause Analysis**, Configuration Item should be mandatory.
+- Description should appear after entering a Short Description.
+
+### 5. Verify Client Script and UI Action
+- Confirm that help icons appear on Impact and Urgency.
+- Test the Save & Exit button to verify that the record is saved and the user returns to the list.
+
+## Future Enhancements
+
+- Prevent duplicate Problem Task creation when an existing problem is updated multiple times in the Assess state.
+- Implement assignment-change notifications using Flow Designer.
+- Introduce a Problem → Known Error → Knowledge Article workflow.
+- Create reports and dashboards for problems by state, priority, and assignment group.
+
+## Technologies Used
+
+- ServiceNow ITSM – Problem Management
+- Business Rules
+- Client Scripts
+- UI Policies
+- UI Actions
+- GlideRecord
+- JavaScript
+- Update Sets
+
+## Learning Outcomes
+
+- Created a custom table extending a standard ServiceNow table.
+- Configured custom auto-numbering.
+- Implemented business rules for data handling and automation.
+- Configured UI Policies for dynamic form behaviour.
+- Developed a client script for field-level assistance.
+- Used update sets to package and migrate ServiceNow customizations.
+
+---
+
+**Project Type:** ServiceNow ITSM POC  
+**Focus Areas:** Problem Management, Automation, Form Customization, and Application Development
