@@ -42,8 +42,6 @@ Relevant state values:
 
 ```text
 ## Repository Structure
-
-```text
 ServiceNow-Problem-Management-POC/
 ├── update-set/
 │   └── POC_PRB_TABLE_update_set.xml
