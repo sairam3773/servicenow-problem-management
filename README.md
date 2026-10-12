@@ -41,15 +41,20 @@ Relevant state values:
 ## Repository Structure
 
 ```text
+## Repository Structure
+
+```text
 ServiceNow-Problem-Management-POC/
 ├── update-set/
 │   └── POC_PRB_TABLE_update_set.xml
-├── scripts/
-│   ├── business_rule_initial_assignment_group.js
-│   ├── business_rule_problem_task_automation.js
-│   ├── client_script_help_icon_prb.js
-│   └── ui_policy_make_ci_mandatory_in_rca.js
+├── screenshots/
+│   ├── problem-list.png
+│   ├── problem-form.png
+│   └── problem-task.png
 └── README.md
+```
+
+
 ```
 
 ## Installation Guide
